@@ -110,17 +110,25 @@ class _schedulingpage2State extends State<schedulingpage2> {
                  ElevatedButton(onPressed: ()async {
                   dayitem Day=dayitem(Dayy.day.toString()+selectedstart.text, item, selectedstart.text, selectedend.text, Dayy.day.toString(), img);
                   var snapshot=await retrieveDays();
+                  int hrs=0;
+                  if(selectedstart.text.split(" ")[1]=="PM"&&selectedstart.text.split(":")[0]!="12")
+                    {
+                      hrs=12;
+                    }
+                  if(selectedstart.text.split(" ")[1]=="AM"&& selectedstart.text.split(":")[0]=="12")
+                  {
+                    hrs=-12;
+                  }
                   if(DatabaseHandler().CheckTime(snapshot, Day,Dayy)) {
                     await DatabaseHandler().insertDay(Day);
                     await flutterLocalNotificationsPlugin.zonedSchedule(
                        int.parse(selectedstart.text.split(":")[0])+int.parse(selectedstart.text.split(":")[1].split(" ")[0])+Dayy.day,
                         Day.title,
                        "Start time :"+ Day.start_time,
-                        tz.TZDateTime.from(DateTime(Dayy.year, Dayy.month, Dayy.day, int.parse(selectedstart.text.split(":")[0]), int.parse(selectedstart.text.split(":")[1].split(" ")[0])), tz.local),
-                        //tz.TZDateTime.parse(tz.local, selectedstart.text).add(const Duration(seconds: 15)),
+                        tz.TZDateTime.from(DateTime(Dayy.year, Dayy.month, Dayy.day, int.parse(selectedstart.text.split(":")[0])+hrs, int.parse(selectedstart.text.split(":")[1].split(" ")[0])), tz.local),
                         const NotificationDetails(
                             android: AndroidNotificationDetails('your channel title',
-                                'your channel name', 'your channel description')),
+                                'your channel name', 'your channel description',icon: "ic_launcher")),
                         androidAllowWhileIdle: true,
                         uiLocalNotificationDateInterpretation:
                         UILocalNotificationDateInterpretation.absoluteTime);

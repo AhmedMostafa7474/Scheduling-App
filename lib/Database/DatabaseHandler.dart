@@ -12,11 +12,11 @@ class DatabaseHandler {
       join(path, 'scheduler.db'),
       onCreate: (database, version) async {
         await database.execute(
-          "CREATE TABLE Days(id TEXT PRIMARY KEY NOT NULL, title TEXT NOT NULL,start_time TEXT NOT NULL, end_time TEXT NOT NULL, day TEXT NOT NULL, img TEXT)",
+          "CREATE TABLE Days(id TEXT PRIMARY KEY NOT NULL, title TEXT NOT NULL,start_time TEXT NOT NULL, end_time TEXT NOT NULL, day TEXT NOT NULL, img TEXT,note TEXT)",
         );
       },
-      version: 2,
-        onUpgrade: _onUpgrade
+      version: 1,
+        //onUpgrade: _onUpgrade
     );
   }
   void _onUpgrade(Database db, int oldVersion, int newVersion) {
@@ -46,24 +46,32 @@ class DatabaseHandler {
   {
     for(dayitem i in Days)
       {
-        DateFormat dateFormat = new DateFormat.Hm();
-        DateTime now = Dayy;
-        DateTime open = dateFormat.parse(i.start_time.split(" ")[0]);
-        open = new DateTime(now.year, now.month, int.parse(i.day), open.hour, open.minute);
-        DateTime close = dateFormat.parse(i.end_time.split(" ")[0]);
-        close = new DateTime(now.year, now.month, int.parse(i.day), close.hour, close.minute);
-        DateTime newitemstart = dateFormat.parse(item.start_time.split(" ")[0]);
-        newitemstart = new DateTime(now.year, now.month, now.day, newitemstart.hour, newitemstart.minute);
-        DateTime newitemend = dateFormat.parse(item.end_time.split(" ")[0]);
-        newitemend = new DateTime(now.year, now.month, now.day, newitemend.hour, newitemend.minute);
-        print("Start :" + newitemstart.toString());
-        print("end :" + newitemend.toString());
-        print("Nowstart :" + open.toString());
-        print("NowEnd :" + close.toString());
-        if((newitemstart.isAfter(open)&&newitemstart.isBefore(close))||(newitemend.isAfter(open)&&newitemend.isBefore(close)))
-          {
+        if(i.start_time.split(" ")[1]==item.start_time.split(" ")[1]) {
+          DateFormat dateFormat = new DateFormat.Hm();
+          DateTime now = Dayy;
+          DateTime open = dateFormat.parse(i.start_time.split(" ")[0]);
+          open = new DateTime(
+              now.year, now.month, int.parse(i.day), open.hour, open.minute);
+          DateTime close = dateFormat.parse(i.end_time.split(" ")[0]);
+          close = new DateTime(
+              now.year, now.month, int.parse(i.day), close.hour, close.minute);
+          DateTime newitemstart = dateFormat.parse(
+              item.start_time.split(" ")[0]);
+          newitemstart = new DateTime(
+            now.year, now.month, now.day, newitemstart.hour,
+            newitemstart.minute,);
+          DateTime newitemend = dateFormat.parse(item.end_time.split(" ")[0]);
+          newitemend = new DateTime(
+              now.year, now.month, now.day, newitemend.hour, newitemend.minute);
+          print("Start :" + newitemstart.toString());
+          print("end :" + newitemend.toString());
+          print("Nowstart :" + open.toString());
+          print("NowEnd :" + close.toString());
+          if ((newitemstart.isAfter(open) && newitemstart.isBefore(close)) ||
+              (newitemend.isAfter(open) && newitemend.isBefore(close))||(newitemstart.isAfter(newitemend))) {
             return false;
           }
+        }
       }
     return true;
   }
